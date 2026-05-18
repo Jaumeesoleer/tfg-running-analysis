@@ -41,22 +41,32 @@ Plataforma web integral diseñada para la optimización, análisis exploratorio 
 
 ```text
 the-architect/
-├── frontend/             # Single Page Application (Vue 3)
-│   ├── src/
-│   │   ├── api/          # Cliente Axios centralizado e interceptores
-│   │   ├── components/   # Componentes reutilizables de Chart.js
-│   │   ├── stores/       # Estados globales de Pinia (User, Activity, Prediction)
-│   │   └── views/        # Vistas de la aplicación (Dashboard, Predictor, Profile)
-│   └── Dockerfile
-├── backend/              # API REST (Flask)
-│   ├── artifacts/        # Almacenamiento del modelo serializado (.pkl)
-│   ├── logic/            # Scripts standalone de entrenamiento del modelo (tfg_trainer.py)
-│   ├── models/           # Modelos ORM de SQLAlchemy (User, Activity, ActivityStream, etc.)
-│   ├── routes/           # Blueprints de endpoints lógicos organizados por dominios
-│   ├── services/         # Servicios de cálculo de métricas y lógica analítica dura
-│   ├── utils/            # Parsers transversales de telemetría
-│   └── Dockerfile
-└── docker-compose.yml    # Orquestación de servicios (frontend, backend, db, adminer)
+├── backend/
+│   ├── artifacts/          # Modelo ML serializado (.pkl)
+│   ├── logic/              # Acceso a datos desacoplado del ORM (db_utils.py)
+│   ├── migrations/         # Control de versiones del esquema de BD
+│   ├── models/             # Modelos ORM de SQLAlchemy (User, Activity, ActivityStream, PredictionLog, ModelAnalysis)
+│   ├── routes/             # Blueprints de endpoints (auth, activities, upload, predict, support)
+│   ├── services/           # Lógica de negocio y transformación de datos (metrics.py, data_processing.py)
+│   ├── static/             # Contenido estático del servidor (imágenes de perfil)
+│   ├── utils/              # Utilidades transversales (csv_parser.py)
+│   ├── app.py              # punto de entrada y factory de la aplicación Flask
+│   ├── config.py           # Configuración centralizada (base de datos, JWT, CORS)
+│   ├── database.py         # Instancia compartida de SQLAlchemy
+│   ├── Dockerfile          # Contenerización del entorno del servidor
+│   └── requirements.txt    # Dependencias del ecosistema Python
+└── frontend/
+    ├── public/             # Recursos públicos globales (reproducción del favicon)
+    ├── src/
+    │   ├── api/            # Cliente Axios centralizado (index.js) con interceptores de respuesta
+    │   ├── assets/         # Estilos globales y recursos estáticos
+    │   ├── components/     # Componentes reutilizables (gráficas, modales, cards, formularios)
+    │   ├── router/         # Configuración de rutas y navigation guards (index.js)
+    │   ├── services/       # Capa de abstracción de peticiones HTTP (auth.js, activity.js, prediction.js, support.js)
+    │   ├── stores/         # Almacenes Pinia de estado reactivo (user.js, activity.js, prediction.js, support.js)
+    │   └── views/          # Vistas de la aplicación, separadas en públicas y protegidas (auth/)
+    ├── dockerfile          # Contenerización de la capa de presentación
+    └── index.html          # HTML principal sobre el que monta el DOM virtual de Vue
 ```
 
 ## 💻 Instalación y Ejecución Local
