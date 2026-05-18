@@ -4,7 +4,6 @@ services:
     restart: always
     ports:
       - "8080:8080"
-
   db:
     image: postgres:15-alpine
     restart: always
@@ -28,7 +27,6 @@ services:
       - PYTHONUNBUFFERED=1
     depends_on:
       - db
-
   frontend:
     build: ./frontend
     ports:
