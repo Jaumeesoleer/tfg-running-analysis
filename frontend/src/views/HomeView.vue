@@ -121,16 +121,23 @@ const handleDemoLogin = async () => {
           class="transition-all px-10"
           @click="handleDemoLogin"
         />
-        <Button
-          content="Documentación técnica"
-          change=""
-          bold="font-bold"
-          w=""
-          colors=""
-          border="border-1 border-[#c7c5d3]"
-          hover="hover:bg-[#c7c5d340]"
-          class="px-10"
-        />
+        <a
+          href="https://github.com/Jaumeesoleer/tfg-running-analysis/"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <Button
+            content="Documentación técnica"
+            change=""
+            bold="font-bold"
+            w=""
+            type=""
+            colors=""
+            border="border-1 border-[#c7c5d3]"
+            hover="hover:bg-[#c7c5d340]"
+            class="px-10"
+          />
+        </a>
       </div>
     </div>
   </section>
