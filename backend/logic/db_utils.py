@@ -135,7 +135,7 @@ def user_stats(user_id):
     start_date = datetime.now() - timedelta(days=90)
     stmt = (
         select(
-            func.avg(Activity.mov_time).label('avg_duration'),  # <-- Cambiado aquí
+            func.avg(Activity.mov_time).label('avg_duration'),  
             func.avg(Activity.avg_heartrate).label('avg_hr'),
             func.avg(Activity.distance).label('avg_distance')
         )

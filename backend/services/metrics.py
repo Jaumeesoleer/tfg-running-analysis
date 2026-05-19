@@ -310,6 +310,7 @@ def get_time_in_zone(streams_list, user_id):
 def get_user_data(user_id):
     """Hidrata la instantánea estructurada del perfil completo del corredor mapeando la configuración biométrica."""
     user= get_user_from_id(user_id)
+    age = get_age_from_date(user.birthdate)
 
     return{
         'name': user.name,
@@ -324,8 +325,8 @@ def get_user_data(user_id):
         },
         'email' : user.email,
         'weight' : user.weight,
-        'max_hr' : user.max_hr,
-        'rest_hr': user.rest_hr,
+        'max_hr' : user.max_hr or get_max_heartrate(age),
+        'rest_hr': user.rest_hr or 60,
         'registration_date': {
             'raw' : user.registration_date,
             'formatted' : format_short_date(user.registration_date)

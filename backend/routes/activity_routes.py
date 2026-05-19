@@ -77,10 +77,13 @@ def get_last_activity():
     extrayendo las series temporales por segundo y computando la distribución por zonas.
     """
     user_id = get_jwt_identity()
-    if not user_id: return jsonify({'error' : 'error'}), 400
+    if not user_id: return jsonify({'error' : 'error'}), 401
 
     user = get_user_from_id(user_id)
     last_activity = get_last_activity_(user_id)
+
+    if not last_activity: return jsonify({'has_activity': False}), 404
+
     st = get_activity_streams(last_activity.activity_id)
     streams_list = [activity_stream_dto(s) for s in st]
     streams_card = get_segments_data(streams_list)
@@ -99,7 +102,7 @@ def get_last_activity():
             'max_hr' : user.max_hr,
             'rest_hr' : user.rest_hr,
             'zones' : user.heart_rate_zones
-        }
+        },
     })
 
 @activity_bp.route('/activity', methods=['GET'])
