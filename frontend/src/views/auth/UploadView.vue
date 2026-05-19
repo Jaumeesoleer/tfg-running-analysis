@@ -71,32 +71,110 @@ const triggerFileInput = () => {
               <div
                 class="flex flex-col items-center justify-center w-full h-64 bg-neutral-secondary-medium border border-dashed border-default-strong rounded-xl bg-neutral-back border-neutral/60"
               >
-                <div class="flex flex-col items-center justify-center text-body pt-5 pb-6">
-                  <Upload class="bg-neutral-back-auth rounded-md w-15 h-15 p-3" />
-                  <p class="mb-2 text-sm">Drag & Drop</p>
-                  <p class="text-xs mb-4">Soporte para varios .CSV.</p>
-                  <Button
-                    v-if="selectedFiles.length === 0"
-                    content="Browse files"
-                    change="Uploading..."
-                    w=""
-                    class="p-2"
-                    :click="triggerFileInput"
-                    :disabled="isUploading"
-                    classes="text-xs capitalize"
-                    bold=""
-                  />
-                  <Button
-                    v-else
-                    :content="`Upload ${selectedFiles.length} files`"
-                    change="Uploading..."
-                    w=""
-                    class="p-2"
-                    :click="uploadActivities"
-                    :disabled="isUploading"
-                    classes="text-xs capitalize"
-                    bold=""
-                  />
+                <div
+                  class="flex flex-col items-center justify-center w-full min-h-64 p-6 bg-neutral-secondary-medium border border-dashed border-default-strong rounded-xl bg-neutral-back border-neutral/60"
+                >
+                  <div class="flex flex-col items-center justify-center text-body w-full">
+                    <div
+                      v-if="isUploading"
+                      class="flex flex-col items-center justify-center text-center animate-pulse"
+                    >
+                      <Upload
+                        class="bg-neutral-back-auth rounded-md w-15 h-15 p-3 mb-3 text-neutral-medium"
+                      />
+                      <p class="text-sm font-medium mb-1">
+                        {{ uploadStatus || 'Subiendo archivos...' }}
+                      </p>
+                      <p class="text-xs text-neutral-light">Por favor, no cierres esta ventana.</p>
+                    </div>
+
+                    <div
+                      v-else-if="serverErrors.length > 0 || uploadStatus === 'Procesado completado'"
+                      class="w-full max-h-52 overflow-y-auto px-2"
+                    >
+                      <div class="text-center mb-3">
+                        <p class="text-sm font-bold text-neutral-strong">
+                          Resumen del procesamiento:
+                        </p>
+                      </div>
+
+                      <div class="space-y-3">
+                        <div v-if="serverErrors.length > 0">
+                          <p
+                            class="text-xs font-semibold text-light-red mb-1 flex items-center gap-1"
+                          >
+                            No se pudieron procesar ({{ serverErrors.length }}):
+                          </p>
+                          <ul
+                            class="text-xs space-y-1 bg-light-red/5 p-2.5 rounded-lg border border-light-red/20 max-h-28 overflow-y-auto"
+                          >
+                            <li
+                              v-for="(err, index) in serverErrors"
+                              :key="index"
+                              class="text-light-red wrap-break-word list-disc list-inside"
+                            >
+                              {{ err }}
+                            </li>
+                          </ul>
+                        </div>
+
+                        <div v-if="selectedFiles.length > 0">
+                          <p
+                            class="text-xs font-semibold text-light-green mb-1 flex items-center gap-1"
+                          >
+                            Procesados correctamente:
+                          </p>
+                          <div
+                            class="bg-light-green/10 p-2 rounded-lg border border-light-green/20 text-xs text-light-green"
+                          >
+                            Se han cargado con éxito
+                            <span class="font-bold">{{
+                              selectedFiles.length - serverErrors.length
+                            }}</span>
+                            de <span class="font-bold">{{ selectedFiles.length }}</span> archivos.
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="text-center mt-4">
+                        <button
+                          @click="((serverErrors = []), (selectedFiles = []), (uploadStatus = ''))"
+                          class="text-xs underline hover:text-neutral-strong cursor-pointer font-medium"
+                        >
+                          Subir más archivos
+                        </button>
+                      </div>
+                    </div>
+
+                    <div v-else class="flex flex-col items-center justify-center">
+                      <Upload class="bg-neutral-back-auth rounded-md w-15 h-15 p-3 mb-2" />
+                      <p class="mb-1 text-sm font-semibold">Drag & Drop</p>
+                      <p class="text-xs mb-4">Soporte para varios .CSV.</p>
+
+                      <Button
+                        v-if="selectedFiles.length === 0"
+                        content="Browse files"
+                        change="Uploading..."
+                        w=""
+                        class="p-2"
+                        :click="triggerFileInput"
+                        :disabled="isUploading"
+                        classes="text-xs capitalize"
+                        bold=""
+                      />
+                      <Button
+                        v-else
+                        :content="`Upload ${selectedFiles.length} files`"
+                        change="Uploading..."
+                        w=""
+                        class="p-2"
+                        :click="uploadActivities"
+                        :disabled="isUploading"
+                        classes="text-xs capitalize"
+                        bold=""
+                      />
+                    </div>
+                  </div>
                 </div>
               </div>
 
@@ -108,15 +186,6 @@ const triggerFileInput = () => {
                 @change="handleFileChange"
                 class="hidden"
               />
-              <p v-if="uploadStatus">{{ uploadStatus }}</p>
-              <div v-if="serverErrors.length > 0" class="error-list">
-                <h3>Algunos archivos no se pudieron procesar:</h3>
-                <ul>
-                  <li v-for="(err, index) in serverErrors" :key="index">
-                    {{ err }}
-                  </li>
-                </ul>
-              </div>
             </div>
           </div>
           <div class="bg-neutral-back/60 border rounded-xl border-neutral/30 p-4 mt-5 shadow-inner">
