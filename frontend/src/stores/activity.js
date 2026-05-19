@@ -19,6 +19,7 @@ export const useActivityStore = defineStore('activity', () => {
   const loading = ref(false)
   const pagination = ref([])
   const audit = ref([])
+  const hasActivity = ref(false)
 
   const currentUser = computed(() => userStore.user)
   // 1. Ingesta del Dashboard Inicial (/last-activity)
@@ -30,8 +31,12 @@ export const useActivityStore = defineStore('activity', () => {
       activityStream.value = response.data.streams
       cards.value = response.data.streams_card
       userSnapshots.value = response.data.user_snapshots
-    } catch (error) {
-      console.error(error)
+      hasActivity.value = true
+    } catch (e) {
+      if (e.response && e.response.status === 404) {
+        hasActivity.value = false
+      }
+      console.log(hasActivity.value)
     } finally {
       loading.value = false
     }
@@ -83,6 +88,7 @@ export const useActivityStore = defineStore('activity', () => {
     userSnapshots,
     pagination,
     audit,
+    hasActivity,
     getDashboardData,
     getActivityPagination,
     getActivity,

@@ -6,6 +6,7 @@ import AuthTitle from '@/components/AuthTitle.vue'
 import { useActivityStore } from '@/stores/activity'
 import { computed, onMounted } from 'vue'
 import DashboardGraph from '@/components/DashboardGraph.vue'
+import DashboardDefault from '../../components/DashboardDefault.vue'
 
 const activityStore = useActivityStore()
 
@@ -13,21 +14,22 @@ const activity = computed(() => activityStore.activity)
 const streams = computed(() => activityStore.activityStream)
 const cards = computed(() => activityStore.cards)
 const userSnapshots = computed(() => activityStore.userSnapshots)
+const hasActivity = computed(() => activityStore.hasActivity)
 
 const timestamps = computed(() => {
-  return streams.value.map((s) => s.timestamp) || []
+  return streams.value ? streams.value.map((s) => s.timestamp) : []
 })
 const speedsRaw = computed(() => {
-  return streams.value.map((s) => s.pace.raw)
+  return streams.value ? streams.value.map((s) => s.pace?.raw) : []
 })
 const speeds = computed(() => {
-  return streams.value.map((s) => s.pace.formatted)
+  return streams.value ? streams.value.map((s) => s.pace?.formatted) : []
 })
 const distances = computed(() => {
-  return streams.value.map((s) => s.distance_m)
+  return streams.value ? streams.value.map((s) => s.distance_m) : []
 })
 const heartrates = computed(() => {
-  return streams.value.map((s) => s.heartrate)
+  return streams.value ? streams.value.map((s) => s.heartrate) : []
 })
 
 onMounted(async () => {
@@ -37,7 +39,11 @@ onMounted(async () => {
 <template>
   <main class="bg-neutral-back-auth flex-1 flex pt-5">
     <Sidebar class="hidden md:block" />
-    <div class="md:ml-64 flex-1 px-16 py-8" v-if="activity">
+    <div v-if="activityStore.loading" class="md:ml-64 flex-1 px-16 py-8">
+      <p>Cargando datos del atleta...</p>
+    </div>
+    <div class="md:ml-64 flex-1 px-16 py-8" v-else-if="!hasActivity"><DashboardDefault /></div>
+    <div class="md:ml-64 flex-1 px-16 py-8" v-else-if="activity">
       <AuthTitle
         title="Arquitectura del rendimiento"
         subtitle="Análisis de varianza biométrica y cinemática de sesión para el Atleta."
@@ -122,7 +128,7 @@ onMounted(async () => {
               >
                 Progreso del Archivo
               </p>
-              
+
               <p class="text-sm text-primary-light text-body">
                 El comportamiento con tendencia negativa del coeficiente de determinación (R 2 ) en
                 el modelo de Machine Learning es un comportamiento esperado debido a las
